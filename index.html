@@ -8,10 +8,57 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.min.css">
+    <link rel="stylesheet" id="viewCss" href="css/grid-view.css">
     <title>Unsplash API</title>
 </head>
 
 <body>
+    <div class="container">
+        <header class="header">
+            <h1 class="header__heading">Newest images</h1>
+            <img src="img/logo.png" alt="logo" class="header__logo">
+        </header>
+        <div class="view-option">
+            <button class="grid">Grid view</button>
+            <button class="column">Column view</button>
+        </div>
+
+
+        <div class="holderImages">
+        </div>
+    </div>
+
+
+    <div class="modal-wrapper">
+        <div class="modal">
+            <img src="" alt="" class="modal__img">
+            <div class="modal__info">
+                <a href="" class="modal__info__link"></a>
+                <p class="modal__info__alt">Alt is not availble for this photo</p>
+            </div>
+            <div class="modal__counts">
+                <div class="modal__likes">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                        <title>checkmark</title>
+                        <path d="M27 4l-15 15-7-7-5 5 12 12 20-20z"></path>
+                    </svg>
+                    <p class="modal__likes__num"></p>
+                </div>
+            </div>
+            <div class="modal__user">
+                <div class="modal__user__portrait">
+                    <img src="" alt="User portrait" id="user-photo">
+                    <p id="user-name"></p>
+                </div>
+                <div class="modal__user__portfolio">
+                    <a href="" id="portfolio"></a>
+                </div>
+                <div class="modal__user__links">
+                    <!-- <a href="" class="modal__user__links__link">Facebook</a> -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script defer src="script.js"></script>
 </body>
