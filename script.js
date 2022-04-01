@@ -87,7 +87,6 @@ const getPhotos = function (page) {
 
         // rendering images on page
         data.forEach(el => {
-            console.log(el);
             const img = `
                 <div class="card col-xl-4 col-lg-6 col-md-12 viewHandle">
                     <a href="${el.urls.full}" target="_blank">
