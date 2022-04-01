@@ -24,6 +24,7 @@
 .card-img-top {
     height: 270px;
     object-fit: cover;
+    cursor: pointer;
 
     @media only screen and (max-width: 991px) {
         height: 400px;

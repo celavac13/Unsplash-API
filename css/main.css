@@ -59,6 +59,7 @@ body {
   height: 270px;
   -o-object-fit: cover;
      object-fit: cover;
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 991px) {
