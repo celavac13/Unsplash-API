@@ -66,7 +66,7 @@ const renderingModal = function (data) {
     }
     if (data.user.twitter_username) {
         const linkSocial = document.createElement("a");
-        linkSocial.href = `https://www.twitter.com/${el.user.twitter_username}`;
+        linkSocial.href = `https://www.twitter.com/${data.user.twitter_username}`;
         linkSocial.target = "_blank";
         linkSocial.textContent = `Twitter`;
         linkSocial.classList.add("modal-link");
