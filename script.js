@@ -2,98 +2,93 @@
 const PUBLIC_KEY = "34L37bpndqC4DMR9vq_cJIZDGX6lipWNAZbYx3j5pT8";
 const PRIVATE_KEY = `AW6Avq7OQF5sgOdsBtO3aOU9HjWHGn6MOCr9Py0nbGk`;
 const holderImages = document.querySelector(".holderImages");
+const loader = document.querySelector("#loader");
 const columnView = document.querySelector(".column");
 const gridView = document.querySelector(".grid");
 
 // elements for modal
-const modal = document.querySelector(".modal-wrapper");
-const modalImg = document.querySelector(".modal__img");
-const imgLink = document.querySelector(".modal__info__link");
-const imgAlt = document.querySelector(".modal__info__alt");
-const likes = document.querySelector(".modal__likes__num");
-const portrait = document.querySelector("#user-photo");
-const userName = document.querySelector("#user-name");
+const modal = document.querySelector(".modal");
+const modalClose = document.querySelector(".modalClose");
+const modalImg = document.querySelector(".modal-img");
+const imgLink = document.querySelector(".modal-info");
+const likes = document.querySelector(".like-count");
+const portrait = document.querySelector(".modal-portrait");
+const userName = document.querySelector(".modal-username");
 const portfolio = document.querySelector("#portfolio");
-const socails = document.querySelector(".modal__user__links");
+const socails = document.querySelector(".modal-links");
 
 // counter for pages;
 let pages = 1;
 
-// creating loader
-const loader = document.createElement("div");
-const loaderCircle = document.createElement("div");
-loader.setAttribute("id", "loader");
-loaderCircle.setAttribute("id", "loader-circle");
-loader.appendChild(loaderCircle);
-
-// closing modal when clicked outside of it
+// closing modal
+modalClose.addEventListener("click", () => {
+    modal.style.display = "none";
+    modal.style.opacity = "0";
+});
 modal.addEventListener("click", (e) => {
     if (e.target === modal) {
-        modal.style.visibility = "hidden";
+        modal.style.display = "none";
+        modal.style.opacity = "0";
     }
-});
-
-// handling view
-columnView.addEventListener("click", e => {
-    e.preventDefault();
-    document.querySelector("#viewCss").href = "css/column-view.css"
-});
-gridView.addEventListener("click", e => {
-    e.preventDefault();
-    document.querySelector("#viewCss").href = "css/grid-view.css"
 });
 
 // function for geting photos from site and rendering them
 const getPhotos = function (page) {
     const request = new XMLHttpRequest;
+    loader.style.display = "block"
     request.open("GET", `https://api.unsplash.com/photos?page=${page}&per_page=15&client_id=${PUBLIC_KEY}`);
     request.send();
-    holderImages.appendChild(loader)
 
     request.addEventListener("load", function () {
         const data = JSON.parse(this.responseText);
-
-        // removing loader
-        document.querySelector("#loader").remove();
+        loader.style.display = "none"
 
         // rendering images on page
         data.forEach(el => {
-            const img = document.createElement("img");
-            img.src = el.urls.regular;
-            img.classList.add("holderImages__img");
-            holderImages.appendChild(img);
+            const img = `
+                <div class="card col-xl-4 col-lg-6 col-md-12 viewHandle">
+                    <img src="${el.urls.regular}" class="card-img-top" alt="${el.alt_description ? el.alt_description : "Unsplash photo"}">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <img src="${el.user.profile_image.medium}" class="card-img">
+                            <h5 class="card-title margin-left">${el.user.username}</h5>
+                        </div>
+                        <div class="d-flex align-items-center card-likes">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                            </svg>
+                            <p class="card-text margin-left">${el.likes}</p>
+                        </div>
+                        <a href="#" class="btn btn-primary modalBtn"  data-bs-toggle="modal" data-bs-target="#exampleModal">Full info</a>
+                    </div>
+                </div>`
 
-            // event for modal
-            img.addEventListener("click", () => {
-                modal.style.visibility = "visible";
+            holderImages.insertAdjacentHTML("beforeend", img);
+            const modalBtn = document.querySelectorAll(".modalBtn")[document.querySelectorAll(".modalBtn").length - 1];
+
+            // showing modal
+            modalBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                modal.style.display = "block";
+                modal.style.opacity = "1";
 
                 modalImg.src = el.urls.regular;
-                modalImg.alt = el.alt_description;
+                modalImg.alt = el.alt_description ? el.alt_description : "Unsplash photo";
 
                 imgLink.href = imgLink.textContent = el.links.html;
-                imgLink.target = "_blank";
-                if (el.alt_description) {
-                    imgAlt.textContent = el.alt_description;
-                } else if (el.description) {
-                    imgAlt.textContent = el.description;
-                } else {
-                    imgAlt.textContent = `Alt is not availble for this photo`
-                }
-
                 likes.textContent = el.likes;
                 portrait.src = el.user.profile_image.medium;
                 userName.textContent = el.user.username;
                 portfolio.href = portfolio.textContent = el.user.portfolio_url;
-                portfolio.target = "_blank";
 
-                // checking if there is a social link, and rendering
+                // checking for social and rendering
                 socails.innerHTML = "";
                 if (el.user.instagram_username) {
                     const linkSocial = document.createElement("a");
                     linkSocial.href = `https://www.instagram.com/${el.user.instagram_username}`;
                     linkSocial.target = "_blank";
                     linkSocial.textContent = `Instagram`;
-                    linkSocial.classList.add("modal__user__links__link");
+                    linkSocial.classList.add("modal-link");
                     socails.appendChild(linkSocial);
                 }
                 if (el.user.paypal_email) {
@@ -101,7 +96,7 @@ const getPhotos = function (page) {
                     linkSocial.href = el.user.paypal_email;
                     linkSocial.target = "_blank";
                     linkSocial.textContent = `PayPal`;
-                    linkSocial.classList.add("modal__user__links__link");
+                    linkSocial.classList.add("modal-link");
                     socails.appendChild(linkSocial);
                 }
                 if (el.user.twitter_username) {
@@ -109,7 +104,7 @@ const getPhotos = function (page) {
                     linkSocial.href = `https://www.twitter.com/${el.user.twitter_username}`;
                     linkSocial.target = "_blank";
                     linkSocial.textContent = `Twitter`;
-                    linkSocial.classList.add("modal__user__links__link");
+                    linkSocial.classList.add("modal-link");
                     socails.appendChild(linkSocial);
                 }
             });
@@ -124,7 +119,7 @@ getPhotos(pages);
 window.addEventListener("scroll", () => {
     let totalPageHeight = document.body.scrollHeight;
     let scrollPoint = window.pageYOffset + window.innerHeight;
-    let imgs = document.querySelectorAll(".holderImages__img");
+    let imgs = document.querySelectorAll(".card-img-top");
     let lastImg = imgs[imgs.length - 1];
     if (scrollPoint >= totalPageHeight - 1 && document.readyState === "complete" && lastImg.complete) {
         pages++
@@ -132,3 +127,16 @@ window.addEventListener("scroll", () => {
     }
 });
 
+// switch to grid view
+gridView.addEventListener("click", () => {
+    document.querySelectorAll(".viewHandle").forEach(el => {
+        el.className = "card col-xl-4 col-lg-6 col-md-12 viewHandle";
+    })
+})
+
+// switch to column view
+columnView.addEventListener("click", () => {
+    document.querySelectorAll(".viewHandle").forEach(el => {
+        el.className = "card col-xl-12 col-lg-12 col-md-12 viewHandle";
+    })
+})
